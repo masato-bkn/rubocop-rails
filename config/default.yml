@@ -754,6 +754,12 @@ Rails/ReadWriteAttribute:
   Include:
     - app/models/**/*.rb
 
+Rails/RedundantAll:
+  Description: Detect redundant `all` used as a receiver of Active Record query method.
+  Enabled: true
+  SafeAutoCorrect: false
+  VersionAdded: "<<next>>"
+
 Rails/RedundantAllowNil:
   Description: >-
                  Finds redundant use of `allow_nil` when `allow_blank` is set to
