@@ -5,9 +5,28 @@ module RuboCop
     module Rails
       # Detect redundant `all` used as a receiver for Active Record query methods.
       #
-      # @safety
-      #   This cop is unsafe for autocorrection if the receiver for `all` is not an Active Record object.
+      # NOTE: For `delete_all` and `destroy_all`, if the receiver of `all` is an association,
+      # the behavior can change when you omit `all`.
       #
+      # This change occurs because, when `all` is omitted from an association, the method
+      # being called shifts from `ActiveRecord::Relation` to `ActiveRecord::Associations::CollectionProxy`.
+      #
+      # [source,ruby]
+      # ----
+      # user.articles.all.delete_all
+      # # With `all`, it executes `ActiveRecord::Relation#delete_all`
+      #
+      # user.articles.delete_all
+      # # Without `all`, it executes `ActiveRecord::Associations::CollectionProxy#delete_all`
+      # ----
+      #
+      # So, when considering removing `all` from the receiver of these methods,
+      # it's recommended to the sections for these methods in the Active Record documentation.
+      #
+      # @safety
+      #   This cop is unsafe for autocorrection in the following cases:
+      #   * When the receiver of `all` is not an Active Record object.
+      #   * For `delete_all` or `destroy_all`,  When the receiver of `all` is an association.
       # @example
       #   # bad
       #   User.all.find(id)
