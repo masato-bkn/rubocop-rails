@@ -32,7 +32,7 @@ module RuboCop
         end
       end
 
-      # Detect redundant `all` used as a receiver for Active Record query methods.
+      # Detect redundant `all` used as a receiver for certain Active Record methods.
       #
       # For the methods `delete_all` and `destroy_all`, this cop will only check cases where the receiver is a model.
       # It will ignore cases where the receiver is an association (e.g., `user.articles.all.delete_all`).
@@ -71,7 +71,7 @@ module RuboCop
         RESTRICT_ON_SEND = [:all].freeze
 
         # Defined methods in `ActiveRecord::Querying::QUERYING_METHODS` on activerecord 7.1.0.
-        QUERYING_METHODS = %i[
+        ACTIVE_RECORD_METHODS = %i[
           and
           annotate
           any?
@@ -181,12 +181,12 @@ module RuboCop
         POSSIBLE_ENUMERABLE_BLOCK_METHODS = %i[any? count find none? one? select sum].freeze
         SENSITIVE_METHODS_ON_ASSOCIATION = %i[delete_all destroy_all].freeze
 
-        def_node_matcher :followed_by_query_method?, <<~PATTERN
-          (send (send _ :all) QUERYING_METHODS ...)
+        def_node_matcher :followed_by_active_record_method?, <<~PATTERN
+          (send (send _ :all) ACTIVE_RECORD_METHODS ...)
         PATTERN
 
         def on_send(node)
-          return unless followed_by_query_method?(node.parent)
+          return unless followed_by_active_record_method?(node.parent)
           return if possible_enumerable_block_method?(node) || sensitive_association_method?(node)
           return if node.receiver ? allowed_receiver?(node.receiver) : !inherit_active_record_base?(node)
 

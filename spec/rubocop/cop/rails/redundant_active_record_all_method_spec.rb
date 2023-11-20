@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Rails::RedundantActiveRecordAllMethod, :config do
-  describe "#{described_class}::QUERYING_METHODS" do
+  describe "#{described_class}::ACTIVE_RECORD_METHODS" do
     it 'equals defined methods in `ActiveRecord::Querying::QUERYING_METHODS`' do
-      expect(described_class::QUERYING_METHODS).to eq(
+      expect(described_class::ACTIVE_RECORD_METHODS).to eq(
         %i[
           and
           annotate
